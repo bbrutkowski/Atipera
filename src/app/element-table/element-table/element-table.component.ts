@@ -9,6 +9,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-element-table',
@@ -16,12 +18,14 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrls: ['./element-table.component.css'],
   standalone: true,
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     MatTableModule,
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
-    MatIconModule 
+    MatIconModule,
+    MatProgressSpinnerModule 
   ]
 })
 
@@ -30,6 +34,7 @@ export class ElementTableComponent implements OnInit, OnDestroy {
   public dataSource: MatTableDataSource<PeriodicElement> = new MatTableDataSource<PeriodicElement>();
   public filter: FormControl = new FormControl('');
   private subscriptions: Subscription = new Subscription();
+  public isLoading = true;
 
   constructor(private elementService: ElementService, private dialog: MatDialog) {}
 
@@ -37,6 +42,10 @@ export class ElementTableComponent implements OnInit, OnDestroy {
     this.subscriptions.add(
       this.elementService.getElements().subscribe(elements => {
         this.dataSource.data = elements;
+        
+        setTimeout(() => {
+          this.isLoading = false;
+        }, 2000);
       })
     );
 

@@ -1,3 +1,15 @@
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+}
+  
+  mat-progress-spinner {
+    margin-bottom: 16px;
+}
+
 .custom-edit-button {
     display: inline-flex; 
     align-items: center; 

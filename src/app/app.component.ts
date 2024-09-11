@@ -9,5 +9,5 @@ import { ElementTableComponent } from './element-table/element-table/element-tab
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
+  title ="Atipera"
 }
