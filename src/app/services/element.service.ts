@@ -23,7 +23,7 @@ export class ElementService {
 
   private elementsSubject = new BehaviorSubject<PeriodicElement[]>(this.ELEMENT_DATA);
 
-  getElements(): Observable<PeriodicElement[]> {
+  public getElements(): Observable<PeriodicElement[]> {
     return of(this.elementsSubject.getValue()).pipe(
       tap(elements => console.log('Fetched elements:', elements)),
       catchError(this.handleError<PeriodicElement[]>('getElements', []))
