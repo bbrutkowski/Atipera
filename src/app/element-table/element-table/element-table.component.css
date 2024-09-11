@@ -1,0 +1,25 @@
+.custom-edit-button {
+    display: inline-flex; 
+    align-items: center; 
+    background-color: #04AA6D; 
+    color: white; 
+    border-radius: 8px; 
+    padding: 4px 12px; 
+    height: 36px; 
+    font-weight: bold; 
+    transition: background-color 0.3s ease; 
+}
+  
+.custom-edit-button mat-icon {
+    margin-right: 4px; 
+    font-size: 20px; 
+}
+  
+.custom-edit-button:hover {
+    background-color: #038A5B; 
+}
+  
+.custom-edit-button:focus {
+    outline: none; 
+    box-shadow: 0 0 8px rgba(76, 175, 80, 0.6); 
+}
