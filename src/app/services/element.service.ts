@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PeriodicElement } from '../model/element';
-import { BehaviorSubject, Observable, catchError, delay, of, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -24,17 +24,19 @@ export class ElementService {
   private elementsSubject = new BehaviorSubject<PeriodicElement[]>(this.ELEMENT_DATA);
 
   public getElements(): Observable<PeriodicElement[]> {
-    return of(this.elementsSubject.getValue()).pipe(
+    return this.elementsSubject.asObservable().pipe(
       tap(elements => console.log('Fetched elements:', elements)),
       catchError(this.handleError<PeriodicElement[]>('getElements', []))
     );
   }
 
-  public updateElement(updatedElement: PeriodicElement): void {
+  public updateElement(updatedElement: PeriodicElement): Observable<PeriodicElement[]> {
     const currentElements = this.elementsSubject.getValue(); 
-    const updatedElements = [...currentElements, updatedElement];
+    const updatedElements = [...currentElements, updatedElement]; 
+    
+    this.elementsSubject.next(updatedElements); 
   
-    this.elementsSubject.next(updatedElements);
+    return of(updatedElements);
   }
 
   private handleError<T>(operation = 'operation', result?: T) {

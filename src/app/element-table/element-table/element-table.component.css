@@ -13,7 +13,7 @@
 .custom-edit-button {
     display: inline-flex; 
     align-items: center; 
-    background-color: #04AA6D; 
+    background-color: #4075A0; 
     color: white; 
     border-radius: 8px; 
     padding: 4px 12px; 
@@ -28,7 +28,7 @@
 }
   
 .custom-edit-button:hover {
-    background-color: #038A5B; 
+    background-color: #2B567A; 
 }
   
 .custom-edit-button:focus {
