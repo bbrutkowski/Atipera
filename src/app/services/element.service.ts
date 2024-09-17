@@ -1,12 +1,18 @@
 import { Injectable } from '@angular/core';
 import { PeriodicElement } from '../model/element';
 import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
+import { RxState } from '@rx-angular/state';
 
 @Injectable({
   providedIn: 'root'
 })
 
-export class ElementService {
+export class ElementService extends RxState<{ elements: PeriodicElement[] }> {
+
+  constructor() {
+    super();
+    this.set({ elements: this.ELEMENT_DATA });
+  }
 
   private ELEMENT_DATA: PeriodicElement[] = [
     {position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H'},
@@ -21,22 +27,17 @@ export class ElementService {
     {position: 10, name: 'Neon', weight: 20.1797, symbol: 'Ne'},
   ];
 
-  private elementsSubject = new BehaviorSubject<PeriodicElement[]>(this.ELEMENT_DATA);
-
   public getElements(): Observable<PeriodicElement[]> {
-    return this.elementsSubject.asObservable().pipe(
+    return this.select('elements').pipe(
       tap(elements => console.log('Fetched elements:', elements)),
       catchError(this.handleError<PeriodicElement[]>('getElements', []))
     );
   }
 
-  public updateElement(updatedElement: PeriodicElement): Observable<PeriodicElement[]> {
-    const currentElements = this.elementsSubject.getValue(); 
-    const updatedElements = [...currentElements, updatedElement]; 
-    
-    this.elementsSubject.next(updatedElements); 
-  
-    return of(updatedElements);
+  public updateElement(newElement: PeriodicElement): void {
+    this.set(state => ({
+      elements: [...state.elements, newElement]
+    }));
   }
 
   private handleError<T>(operation = 'operation', result?: T) {

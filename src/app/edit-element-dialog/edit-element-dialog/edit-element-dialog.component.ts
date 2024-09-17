@@ -20,9 +20,8 @@ import { Subject, takeUntil } from 'rxjs';
   styleUrls: ['./edit-element-dialog.component.css']
 })
 
-export class EditElementDialogComponent implements OnInit, OnDestroy {
+export class EditElementDialogComponent implements OnInit {
   editForm!: FormGroup;
-  private destroy$ = new Subject<void>();
 
   constructor(
     private fb: FormBuilder,
@@ -32,7 +31,6 @@ export class EditElementDialogComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeForm();
-    this.trackFormChanges();
   }
 
   private initializeForm(): void {
@@ -44,14 +42,6 @@ export class EditElementDialogComponent implements OnInit, OnDestroy {
     });
   }
 
-  private trackFormChanges(): void {
-    this.editForm.valueChanges.pipe(
-      takeUntil(this.destroy$)
-    ).subscribe(changes => {
-      console.log('Form changes:', changes);
-    });
-  }
-
   public onSave(): void {
     if (this.editForm.valid) {
       this.dialogRef.close({ ...this.editForm.getRawValue(), position: this.data.position });
@@ -60,10 +50,5 @@ export class EditElementDialogComponent implements OnInit, OnDestroy {
 
   public onCancel(): void {
     this.dialogRef.close();
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 }
