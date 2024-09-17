@@ -1,7 +1,7 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ElementService } from '../../services/element.service';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { filter, Subject, Subscription, debounceTime, distinctUntilChanged, switchMap, takeUntil, tap } from 'rxjs';
+import { filter, debounceTime, distinctUntilChanged, tap } from 'rxjs';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PeriodicElement } from '../../model/element';
 import { EditElementDialogComponent } from '../../edit-element-dialog/edit-element-dialog/edit-element-dialog.component';
