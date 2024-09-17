@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CommonModule } from '@angular/common';
+import { RxState } from '@rx-angular/state';
 
 @Component({
   selector: 'app-element-table',
@@ -26,40 +27,41 @@ import { CommonModule } from '@angular/common';
     MatDialogModule,
     MatIconModule,
     MatProgressSpinnerModule 
-  ]
+  ],
+  providers: [RxState]
 })
 
-export class ElementTableComponent implements OnInit, OnDestroy {
+export class ElementTableComponent implements OnInit {
   public displayedColumns: string[] = ['position', 'name', 'weight', 'symbol', 'edit'];
-  public dataSource: MatTableDataSource<PeriodicElement> = new MatTableDataSource<PeriodicElement>();
+  public dataSource = new MatTableDataSource<PeriodicElement>();
   public filter: FormControl = new FormControl('');
-  private subscriptions: Subscription = new Subscription();
-  private destroy$ = new Subject<void>();
   public isLoading = true;
 
-  constructor(private elementService: ElementService, private dialog: MatDialog) {}
+  constructor(
+    private elementService: ElementService,
+    private dialog: MatDialog,
+    private state: RxState<{ elements: PeriodicElement[]; filter: string }>
+  ) {}
 
   ngOnInit(): void {
-    this.elementService.getElements().pipe(
-      takeUntil(this.destroy$), 
-      tap(elements => {
-        setTimeout(() => {
-          this.isLoading = false; 
-          this.dataSource.data = elements; 
-        }, 2000); 
-      })
-    ).subscribe()
-
-    this.filter.valueChanges.pipe(
-      debounceTime(2000),
-      distinctUntilChanged(),
-      takeUntil(this.destroy$)
-    ).subscribe(value => this.applyFilter(value ?? ''));
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.state.connect(
+      'elements', 
+      this.elementService.getElements().pipe(
+        tap(elements => {
+          this.dataSource.data = elements;
+  
+          setTimeout(() => {
+            this.isLoading = false; 
+          }, 2000);
+        })
+      )
+    );
+  
+    this.state.hold(
+      this.filter.valueChanges.pipe(
+        debounceTime(2000), distinctUntilChanged()),
+      (value) => this.applyFilter(value ?? '')
+    );
   }
 
   public applyFilter(filterValue: string): void {
@@ -72,13 +74,11 @@ export class ElementTableComponent implements OnInit, OnDestroy {
       data: { ...element }
     });
   
-    this.subscriptions.add(
+    this.state.hold(
       dialogRef.afterClosed().pipe(
-        filter(result => !!result), 
-        switchMap(result => this.elementService.updateElement(result)) 
-      ).subscribe(updatedElements => {
-        this.dataSource.data = updatedElements; 
-      })
+        filter(result => !!result) 
+      ),
+      (newElement: PeriodicElement) => this.elementService.updateElement(newElement)
     );
   }
 }
