@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PeriodicElement } from '../model/element';
-import { BehaviorSubject, Observable, catchError, of, tap } from 'rxjs';
+import { Observable, catchError, of, tap } from 'rxjs';
 import { RxState } from '@rx-angular/state';
 
 @Injectable({
